@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Dairies.notice.mapper.NoticeMapper">
+	<select id="selectNoticeList" resultType="Dairies.notice.dto.NoticeDto">
+		<![CDATA[
+			SELECT
+				notice_idx,
+				title,
+				contents,
+				hit_cnt,
+				DATE_FORMAT(created_datetime, '%Y.%m.%d %H:%i:%s') AS created_datetime
+			FROM
+				notice
+			WHERE
+				deleted_yn = 'N'
+			ORDER BY notice_idx DESC
+		]]>
+	</select>
+	
+	<insert id="insertNotice" parameterType="Dairies.notice.dto.NoticeDto" useGeneratedKeys="true" keyProperty="noticeIdx">
+		<![CDATA[
+			INSERT INTO notice
+			(
+				title, 
+				contents, 
+				created_datetime, 
+				creator_id
+			) 
+			VALUES 
+			(
+				#{title}, 
+				#{contents}, 
+				NOW(), 
+				'admin'			
+			)
+		]]>
+	</insert>
+	
+	<select id="selectNoticeDetail" parameterType="int" resultType="Dairies.notice.dto.NoticeDto">
+		<![CDATA[
+			SELECT
+				notice_idx,
+				title,
+				contents,
+				hit_cnt,
+				DATE_FORMAT(created_datetime, '%Y.%m.%d %H:%i:%s') AS created_datetime,
+				creator_id
+			FROM
+				notice
+			WHERE
+				notice_idx = #{noticeIdx}
+				AND deleted_yn = 'N'
+		]]>
+	</select>
+	
+	<update id="updateHitCount" parameterType="int">
+		<![CDATA[
+			UPDATE 
+				notice 
+			SET 
+				hit_cnt = hit_cnt + 1 
+			WHERE 
+				notice_idx = #{noticeIdx}
+		]]>
+	</update>
+	
+	<update id="updateNotice" parameterType="Dairies.notice.dto.NoticeDto">
+		<![CDATA[
+			UPDATE notice SET 
+				title = #{title},
+				contents = #{contents},
+				updated_datetime = Now(),
+				updater_id = 'admin'
+			WHERE 
+				notice_idx = #{noticeIdx}
+		]]>
+	</update>
+	
+	<update id="deleteNotice" parameterType="int">
+		<![CDATA[
+			UPDATE notice SET 
+				deleted_yn = 'Y',
+				updated_datetime = Now(),
+				updater_id = 'admin'
+			WHERE 
+				notice_idx = #{noticeIdx}
+		]]>
+	</update>
+	
+	<insert id="insertNoticeFileList" parameterType="Dairies.notice.dto.NoticeFileDto">
+		<![CDATA[
+			INSERT INTO notice_file
+			(
+				notice_idx,
+				original_file_name,
+				stored_file_path,
+				file_size,
+				creator_id,
+				created_datetime
+			)
+			VALUES
+		]]>
+		<foreach collection="list" item="item" separator=",">
+			(
+				#{item.noticeIdx},
+				#{item.originalFileName},
+				#{item.storedFilePath},
+				#{item.fileSize},
+				'admin',
+				NOW()
+			)
+		</foreach>
+	</insert>
+	
+	<select id="selectNoticeFileList" parameterType="int" resultType="Dairies.notice.dto.NoticeFileDto">
+		<![CDATA[
+			SELECT
+				idx,
+				notice_idx,
+				original_file_name,
+				stored_file_path,
+				FORMAT(ROUND(file_size / 1024), 0) AS file_size
+			FROM
+				notice_file
+			WHERE
+				notice_idx = #{noticeIdx}
+				AND deleted_yn = 'N'
+		]]>
+	</select>
+	
+	<select id="selectNoticeFileInformation" parameterType="map" resultType="Dairies.notice.dto.NoticeFileDto">
+		<![CDATA[
+			SELECT
+				original_file_name,
+				stored_file_path,
+				file_size
+			FROM
+				notice_file
+			WHERE
+				idx = #{idx}
+				AND notice_idx = #{noticeIdx}
+				AND deleted_yn = 'N'
+		]]>
+	</select>
+	
+	<select id="selectNoticeFileList2" resultType="Dairies.notice.dto.NoticeFileDto">
+		<![CDATA[
+			SELECT
+				idx,
+				notice_idx,
+				original_file_name,
+				stored_file_path,
+				FORMAT(ROUND(file_size / 1024), 0) AS file_size
+			FROM
+				notice_file
+			WHERE
+				deleted_yn = 'N'
+			ORDER BY notice_idx DESC
+		]]>
+	</select>
+	
+	<select id="selectNoticeDetail2" parameterType="int" resultType="Dairies.notice.dto.NoticeDto">
+		<![CDATA[
+			SELECT
+				notice_idx,
+				title 
+			FROM notice 
+			WHERE notice_idx = #{noticeIdx} 
+			UNION ALL (SELECT notice_idx, title FROM notice WHERE notice_idx < #{noticeIdx} order by notice_idx desc limit 1)
+			UNION ALL (SELECT notice_idx, title FROM notice WHERE notice_idx > #{noticeIdx} order by notice_idx asc limit 1);
+		]]>
+	</select>
+	
+	<select id="selectNoticeSearch" parameterType="String" resultType="Dairies.notice.dto.NoticeDto">
+		<![CDATA[
+			SELECT
+				notice_idx,
+				title,
+				contents,
+				hit_cnt,
+				DATE_FORMAT(created_datetime, '%Y.%m.%d %H:%i:%s') AS created_datetime
+			FROM
+				notice
+			WHERE
+				title LIKE  '%${lookFor}%'
+				OR contents LIKE  '%${lookFor}%'
+				AND deleted_yn = 'N'
+			ORDER BY notice_idx DESC
+		]]>
+	</select>
+	
+</mapper>

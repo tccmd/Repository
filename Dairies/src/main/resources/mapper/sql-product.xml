@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Dairies.product.mapper.ProductMapper">
+	<select id="selectProductList" resultType="Dairies.product.dto.ProductDto">
+		<![CDATA[
+			SELECT
+				product_idx,
+				title,
+				hit_cnt,
+				DATE_FORMAT(created_datetime, '%Y.%m.%d %H:%i:%s') AS created_datetime
+			FROM
+				product
+			WHERE
+				deleted_yn = 'N'
+			ORDER BY product_idx DESC
+		]]>
+	</select>
+
+	<insert id="insertProduct" parameterType="Dairies.product.dto.ProductDto" useGeneratedKeys="true" keyProperty="productIdx">
+		<![CDATA[
+			INSERT INTO product
+			(
+				title, 
+				contents, 
+				created_datetime, 
+				creator_id
+			) 
+			VALUES 
+			(
+				#{title}, 
+				#{contents}, 
+				NOW(), 
+				'admin'			
+			)
+		]]>
+	</insert>
+	
+	<select id="selectProductDetail" parameterType="int" resultType="Dairies.product.dto.ProductDto">
+		<![CDATA[
+			SELECT
+				product_idx,
+				title,
+				contents,
+				hit_cnt,
+				DATE_FORMAT(created_datetime, '%Y.%m.%d %H:%i:%s') AS created_datetime,
+				creator_id
+			FROM
+				product
+			WHERE
+				product_idx = #{productIdx}
+				AND deleted_yn = 'N'
+		]]>
+	</select>
+	
+	<update id="updateHitCount" parameterType="int">
+		<![CDATA[
+			UPDATE 
+				product 
+			SET 
+				hit_cnt = hit_cnt + 1 
+			WHERE 
+				product_idx = #{productIdx}
+		]]>
+	</update>
+	
+	<update id="updateProduct" parameterType="Dairies.product.dto.ProductDto">
+		<![CDATA[
+			UPDATE product SET 
+				title = #{title},
+				contents = #{contents},
+				updated_datetime = Now(),
+				updater_id = 'admin'
+			WHERE 
+				product_idx = #{productIdx}
+		]]>
+	</update>
+	
+	<update id="deleteProduct" parameterType="int">
+		<![CDATA[
+			UPDATE product SET 
+				deleted_yn = 'Y',
+				updated_datetime = Now(),
+				updater_id = 'admin'
+			WHERE 
+				product_idx = #{productIdx}
+		]]>
+	</update>
+	
+	<insert id="insertProductFileList" parameterType="Dairies.product.dto.ProductFileDto">
+		<![CDATA[
+			INSERT INTO product_file
+			(
+				product_idx,
+				original_file_name,
+				stored_file_path,
+				file_size,
+				creator_id,
+				created_datetime
+			)
+			VALUES
+		]]>
+		<foreach collection="list" item="item" separator=",">
+			(
+				#{item.productIdx},
+				#{item.originalFileName},
+				#{item.storedFilePath},
+				#{item.fileSize},
+				'admin',
+				NOW()
+			)
+		</foreach>
+	</insert>
+	
+	<select id="selectProductFileList2" resultType="Dairies.product.dto.ProductFileDto">
+		<![CDATA[
+			SELECT
+				idx,
+				product_idx,
+				original_file_name,
+				stored_file_path,
+				FORMAT(ROUND(file_size / 1024), 0) AS file_size
+			FROM
+				product_file
+			WHERE
+				deleted_yn = 'N'
+			ORDER BY product_idx DESC
+		]]>
+	</select>
+	
+	<select id="selectProductFileList" parameterType="int" resultType="Dairies.product.dto.ProductFileDto">
+		<![CDATA[
+			SELECT
+				idx,
+				product_idx,
+				original_file_name,
+				stored_file_path,
+				FORMAT(ROUND(file_size / 1024), 0) AS file_size
+			FROM
+				product_file
+			WHERE
+				product_idx = #{productIdx}
+				AND deleted_yn = 'N'
+		]]>
+	</select>
+	
+	<select id="selectProductFileInformation" parameterType="map" resultType="Dairies.product.dto.ProductFileDto">
+		<![CDATA[
+			SELECT
+				original_file_name,
+				stored_file_path,
+				file_size
+			FROM
+				product_file
+			WHERE
+				idx = #{idx}
+				AND product_idx = #{productIdx}
+				AND deleted_yn = 'N'
+		]]>
+	</select>	
+	
+	<select id="selectProductList2" resultType="Dairies.product.dto.ProductDto">
+		<![CDATA[
+			SELECT
+				product_idx,
+				title,
+				hit_cnt,
+				DATE_FORMAT(created_datetime, '%Y.%m.%d %H:%i:%s') AS created_datetime
+			FROM
+				product
+			WHERE
+				deleted_yn = 'N'
+			ORDER BY product_idx DESC
+		]]>
+	</select>
+	
+</mapper>

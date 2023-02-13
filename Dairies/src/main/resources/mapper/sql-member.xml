@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Dairies.member.mapper.MemberMapper">
+	<select id="selectMemberList" resultType="Dairies.member.dto.MemberDto">
+		<![CDATA[
+			SELECT
+				member_idx,
+				id,
+				tel,
+				email,
+				email2,
+				zipNo.
+				roadAddrPart1.
+				roadAddrPart2,
+				DATE_FORMAT(created_datetime, '%Y.%m.%d %H:%i:%s') AS created_datetime
+			FROM
+				member
+			WHERE
+				deleted_yn = 'N'
+			ORDER BY member_idx DESC
+		]]>
+	</select>
+	
+	<insert id="insertMember" parameterType="Dairies.member.dto.MemberDto" useGeneratedKeys="true" keyProperty="memberIdx">
+		<![CDATA[
+			INSERT INTO member
+			(
+				id, 
+				pw,
+				email,
+				email2,
+				zipNo.
+				roadAddrPart1.
+				roadAddrPart2,
+				created_datetime, 
+				creator_id
+			) 
+			VALUES 
+			(
+				#{id}, 
+				#{pw}, 
+				#{email}, 
+				#{email2}, 
+				#{zipNo}, 
+				#{roadAddrPart1}, 
+				#{roadAddrPart2}, 
+				NOW(), 
+				'admin'			
+			)
+		]]>
+	</insert>
+	
+	<select id="selectMemberDetail" parameterType="int" resultType="Dairies.member.dto.MemberDto">
+		<![CDATA[
+			SELECT
+				member_idx,
+				id,
+				pw,
+				hit_cnt,
+				DATE_FORMAT(created_datetime, '%Y.%m.%d %H:%i:%s') AS created_datetime,
+				creator_id
+			FROM
+				member
+			WHERE
+				member_idx = #{memberIdx}
+				AND deleted_yn = 'N'
+		]]>
+	</select>
+	
+	<update id="updateHitCount" parameterType="int">
+		<![CDATA[
+			UPDATE 
+				member 
+			SET 
+				hit_cnt = hit_cnt + 1 
+			WHERE 
+				member_idx = #{memberIdx}
+		]]>
+	</update>
+	
+	<update id="updateMember" parameterType="Dairies.member.dto.MemberDto">
+		<![CDATA[
+			UPDATE member SET 
+				id = #{id},
+				pw = #{pw},
+				updated_datetime = Now(),
+				updater_id = 'admin'
+			WHERE 
+				member_idx = #{memberIdx}
+		]]>
+	</update>
+	
+	<update id="deleteMember" parameterType="int">
+		<![CDATA[
+			UPDATE member SET 
+				deleted_yn = 'Y',
+				updated_datetime = Now(),
+				updater_id = 'admin'
+			WHERE 
+				member_idx = #{memberIdx}
+		]]>
+	</update>
+	
+		<select id="selectMembeIdList" resultType="Dairies.member.dto.MemberDto">
+		<![CDATA[
+			SELECT
+				id
+			FROM
+				member
+			WHERE
+				deleted_yn = 'N'
+			ORDER BY member_idx DESC
+		]]>
+	</select>
+</mapper>

@@ -1,0 +1,72 @@
+/* Empty CSS file for your own CSS */
+
+.blockquote-footer {
+	text-align: center;
+}
+
+#logo a {
+	height: 100px;
+	line-height: 100px;
+}
+#marginee {
+	height: 190px;
+}
+
+.btn-secondary {
+  color: #fff;
+  background-color: rgb(79, 86, 105);
+  /* border-color: #ccc; */
+}
+
+.btn-secondary:hover {
+  color: #fff;
+  background-color: #292b2c;
+  /* border-color: #adadad; */
+  border-color: #cccccc;
+}
+
+.btn-secondary:focus, .btn-secondary.focus {
+  -webkit-box-shadow: 0 0 0 2px rgba(204, 204, 204, 0.5);
+          box-shadow: 0 0 0 2px rgba(204, 204, 204, 0.5);
+}
+
+.btn-secondary.disabled, .btn-secondary:disabled {
+  background-color: #292b2c;
+  border-color: #ddd;
+}
+
+.btn-secondary:active, .btn-secondary.active,
+.show > .btn-secondary.dropdown-toggle {
+  color: #ccc;
+  background-color: #292b2c;
+  background-image: none;
+  border-color: #adadad;
+}
+
+#contents {
+	background-size: contain;
+	background-image: url("/images/content03.jpg");
+	background-repeat: no-repeat;
+	background-color: rgb(242, 242, 247);
+	
+}
+.form-control-inline {
+  /* display: block; */
+  width: 50%;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.25;
+  color: #464a4c;
+  background-color: #fff;
+  background-image: none;
+  -webkit-background-clip: padding-box;
+          background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.25rem;
+  -webkit-transition: border-color ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
+  -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s, -webkit-box-shadow ease-in-out 0.15s;
+  margin: 0px 0px 8px 0px;
+}
